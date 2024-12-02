@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Global Data</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #333;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            max-width: 1200px;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: #0072ff;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f3f6f9;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #e9f1f7;
+        }
+
+        td img {
+            border-radius: 5px;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(0, 114, 255, 0.2);
+            cursor: pointer;
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }
+
+        @media screen and (max-width: 768px) {
+            table {
+                font-size: 0.8rem;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>COVID-19 Countrywise Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Flag</th>
+                <th>Country</th>
+                <th>Active Cases</th>
+                <th>Confirmed Cases</th>
+                <th>Deaths</th>
+                <th>Recovered</th>
+                <th>Population</th>
+            </tr>
+        </thead>
+        <tbody id="data-body"></tbody>
+    </table>
+
+    <script>
+        const url = 'https://disease.sh/v3/covid-19/countries/';
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tbody = document.querySelector("#data-body");
+
+                data.forEach(countryData => {
+                    let row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td><img src="${countryData.countryInfo.flag}" alt="Flag of ${countryData.country}" width="50" height="30"></td>
+                        <td>${countryData.country}</td>
+                        <td>${countryData.active.toLocaleString()}</td>
+                        <td>${countryData.cases.toLocaleString()}</td>
+                        <td>${countryData.deaths.toLocaleString()}</td>
+                        <td>${countryData.recovered.toLocaleString()}</td>
+                        <td>${countryData.population.toLocaleString()}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    </script>
+</body>
+
+</html>
